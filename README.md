@@ -6,4 +6,6 @@ Used a random forest model to predict players' points for an upcoming gameweek. 
 
 I used data from the 2023/2024 season as my test dataset, and the three previous seasons as my training dataset.
 
+Working on code to pick and manage a team based on the models predictions for each week.
+
 Data from https://github.com/vaastav/Fantasy-Premier-League.
