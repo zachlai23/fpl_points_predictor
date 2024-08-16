@@ -1,3 +1,4 @@
+# Includes functions for picking the best team/starters considering predicted points and budget
 import pprint
 from .mult_seasons_attempt import *
 import pandas as pd
@@ -54,7 +55,7 @@ def combine_dfs( pred, X_test, price_df, gw, pos, name_mapping, name_mapping_rev
 
 
 
-teams_df = pd.read_csv('/Users/zacharylai/Desktop/fpl_points_predictor/datasets/teams23:24.csv')
+teams_df = pd.read_csv('/Users/zacharylai/Desktop/fpl_points_predictor/datasets/23:24/teams23:24.csv')
 teams = teams_df['name'].tolist()
 
 
@@ -184,5 +185,10 @@ def squadValue( squad ):
 def totalPoints( squad ):
     total_points = 0
     for player in squad:
-        total_points += player[3]
+        total_points += player[2]
     return total_points
+
+def chooseCaptain( squad ):
+    squad_sorted = sorted(squad, key=lambda x: x[2], reverse=True)
+    captains = squad_sorted[:2]
+    return captains
