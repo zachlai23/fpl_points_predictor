@@ -1,9 +1,9 @@
 # Choose which players to transfer in/out
-from .initial_team import *
+from initial_team import *
 import pandas as pd # type: ignore
-from .mult_seasons_attempt import *
+from fpl_rf_prediction import *
 from pprint import pprint
-from .fixtures import *
+from fixtures import *
 
 merged_gw = pd.read_csv('/Users/zacharylai/Desktop/fpl_points_predictor/datasets/24:25/24:25mergedGW.csv')
 df_sorted = merged_gw.sort_values(by=['name', 'GW'])

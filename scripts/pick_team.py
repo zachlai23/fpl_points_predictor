@@ -1,6 +1,6 @@
 # Includes functions for picking the best team/starters considering predicted points and budget
 from pprint import pprint
-from .mult_seasons_attempt import *
+from fpl_rf_prediction import *
 import pandas as pd # type: ignore
 
 def lookup( name_mapping, X_test, y_test, pred ):

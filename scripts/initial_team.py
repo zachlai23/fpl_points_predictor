@@ -1,8 +1,11 @@
 # Picking the best initial team based off previous seasons statistics
-from .mult_seasons_attempt import *
-from .pick_team import *
+from fpl_rf_prediction import *
+from pick_team import *
 import pandas as pd # type: ignore
-from .fixtures import *
+from fixtures import *
+
+POS_SORTED = Path('/Users/zacharylai/Desktop/fpl_points_predictor/datasets/position_sorted')
+
 
 # Return list of names from the current season to eliminate players who transferred out of the league
 def name_list( pos_X_test, name_mapping, pos ):
@@ -21,7 +24,6 @@ def name_list_2( cleaned_players_df ):
     names['position'] = names['element_type'].str.lower()
     return names
 
-
 # Create dataframe with players name and predicted points for gw 38
 def prev_season_data( pos_pred, pos_X, name_mapping ):
     pred_df = pd.DataFrame( pos_pred, columns=['points'] )
@@ -31,77 +33,22 @@ def prev_season_data( pos_pred, pos_X, name_mapping ):
     df2['name'] = df2['name'].map(name_mapping)
     return df2
 
-# Choosing initial team based off statistics from last season, does not include incoming players from other leagues
-def chooseInitialTeam( gk_df, def_df, mid_df, fwd_df, cleaned_players ):
-    gk_df2 = pd.read_csv( gk_df )
-    gk_df2, gk2_name_mapping, gk2_name_mapping_reverse = name_mapping( gk_df2 )
-    gk_df2, gk2_value = position_preprocess( gk_df2, 'gk' )
-    gk_df2 = gk_df2.drop(['Unnamed: 0'],axis=1)
+def process_init_df(df, pos):
+    df = pd.read_csv( df )
+    df, name_map, _ = name_mapping(df)
+    df, _ = position_preprocess(df, pos)
+    df = df.drop(['Unnamed: 0', 'total_points'],axis=1)
+    return df, name_map
 
-    def_df2 = pd.read_csv( def_df )
-    def_df2, def2_name_mapping, def2_name_mapping_reverse = name_mapping( def_df2 )
-    def_df2, def2_value = position_preprocess( def_df2, 'def' )
-    def_df2 = def_df2.drop(['Unnamed: 0'],axis=1)
+def predict_points(df, model, name_mapping):
+    pred = model.predict(df)
+    return prev_season_data(pred, df, name_mapping)
 
-    mid_df2 = pd.read_csv( mid_df )
-    mid_df2, mid2_name_mapping, mid2_name_mapping_reverse = name_mapping( mid_df2 )
-    mid_df2, mid2_value = position_preprocess( mid_df2, 'mid' )
-    mid_df2 = mid_df2.drop(['Unnamed: 0'],axis=1)
-
-    fwd_df2 = pd.read_csv( fwd_df )
-    fwd_df2, fwd2_name_mapping, fwd2_name_mapping_reverse = name_mapping( fwd_df2 )
-    fwd_df2, fwd2_value = position_preprocess( fwd_df2, 'fwd' )
-    fwd_df2 = fwd_df2.drop(['Unnamed: 0'],axis=1)
-
-    gk2_X = gk_df2.drop( ['total_points'], axis=1 )
-    def2_X = def_df2.drop( ['total_points'], axis=1 )
-    mid2_X = mid_df2.drop( ['total_points'], axis=1 )
-    fwd2_X = fwd_df2.drop( ['total_points'], axis=1 )
-
-    gk2_pred = gk_rf.predict( gk2_X )
-    def2_pred = def_rf.predict( def2_X )
-    mid2_pred = mid_rf.predict( mid2_X )
-    fwd2_pred = fwd_rf.predict( fwd2_X )
-
-    # Create one dataframe with players' names & predicted points
-    gk2_df = prev_season_data( gk2_pred, gk2_X, gk2_name_mapping )
-    def2_df = prev_season_data( def2_pred, def2_X, def2_name_mapping )
-    mid2_df = prev_season_data( mid2_pred, mid2_X, mid2_name_mapping )
-    fwd2_df = prev_season_data( fwd2_pred, fwd2_X, fwd2_name_mapping )
-    prev_df = pd.concat( [ gk2_df, def2_df, mid2_df, fwd2_df ], ignore_index = True )
-
-    cleaned_players_df = pd.read_csv( cleaned_players )
-
-    names = name_list_2( cleaned_players_df )
-
-    # Create dataframe with players from previous season who are in the current season
-    prev_points = pd.merge( names, prev_df, on='name', how='left')
-    prev_points['points'] = prev_points['points'].fillna(0)
-
-    prev_points.rename(columns={'now_cost': 'value'}, inplace=True)
-
-    prev_points_gk = prev_points[prev_points['position'] == 'gk']
-    prev_points_def = prev_points[prev_points['position'] == 'def']
-    prev_points_mid = prev_points[prev_points['position'] == 'mid']
-    prev_points_fwd = prev_points[prev_points['position'] == 'fwd']
-
-    prev_points_gk = prev_points_gk[['value', 'name', 'points', 'position']]
-    prev_points_def = prev_points_def[['value', 'name','points', 'position']]
-    prev_points_mid = prev_points_mid[['value', 'name', 'points', 'position']]
-    prev_points_fwd = prev_points_fwd[['value', 'name', 'points', 'position']]
-
-    prev_points_gk = prev_points_gk.sort_values( by='points', ascending=False )
-    prev_points_def = prev_points_def.sort_values( by='points', ascending=False )
-    prev_points_mid = prev_points_mid.sort_values( by='points', ascending=False )
-    prev_points_fwd = prev_points_fwd.sort_values( by='points', ascending=False )
-
-    # Pick the initial team of 15 players
-    position_requirements = { 'gk':2, 'def':5, 'mid':5, 'fwd':3 }
-    position_filled = { 'gk':0, 'def':0, 'mid':0, 'fwd':0 }
+def chooseInitialTeam(df):
+    position_requirements = {'gk': 2, 'def': 5, 'mid': 5, 'fwd': 3}
+    position_filled = {pos: 0 for pos in position_requirements}
     iss = []
     total_cost = 60
-    gk, fwd, mid, defs = 0, 1, 2, 3
-    df = pd.concat( [ prev_points_gk, prev_points_def, prev_points_mid, prev_points_fwd ] )
 
     i = 1
     team_count = {}
@@ -161,16 +108,40 @@ def chooseInitialTeam( gk_df, def_df, mid_df, fwd_df, cleaned_players ):
     init_squad.append(fwd)
     return init_squad
 
-initial_squad = chooseInitialTeam( '/Users/zacharylai/Desktop/fpl_points_predictor/datasets/position_sorted/goalkeepers_test.csv', '/Users/zacharylai/Desktop/fpl_points_predictor/datasets/position_sorted/defenders_test.csv', '/Users/zacharylai/Desktop/fpl_points_predictor/datasets/position_sorted/midfielders_test.csv', '/Users/zacharylai/Desktop/fpl_points_predictor/datasets/position_sorted/forwards_test.csv', '/Users/zacharylai/Desktop/fpl_points_predictor/datasets/24:25/cleaned_players24:25.csv' )
+# Choosing initial team based off statistics from last season, does not include incoming players from other leagues
+def initialTeam( gk_df, def_df, mid_df, fwd_df, cleaned_players ):
+    # Load and preprocess data for each position
+    gk_init, gk_init_name_mapping = process_init_df(gk_df, 'gk')
+    def_init, def_init_name_mapping = process_init_df(def_df, 'def')
+    mid_init, mid_init_name_mapping = process_init_df(mid_df, 'mid')
+    fwd_init, fwd_init_name_mapping = process_init_df(fwd_df, 'fwd')
 
-initial_squad[1].pop(1)
-initial_squad[1].pop(1)
-initial_squad[1].pop(1)
-initial_squad[1].pop(1)
-initial_squad[1].append([6.0, 'Virgil van Dijk', 2.799568385422578, 'def'])
-initial_squad[1].append([5.5, 'Kyle Walker', 2.7106, 'def'])
-initial_squad[1].append([5.0, 'Tyrick Mitchell', 2.668, 'def'])
-initial_squad[1].append([5.0, 'Ezri Konsa Ngoyo', 2.476, 'def'])
+    # Run predictions
+    gk2_df = predict_points( gk_init, gk_rf, gk_init_name_mapping )
+    def2_df = predict_points( def_init, def_rf, def_init_name_mapping )
+    mid2_df = predict_points( mid_init, mid_rf, mid_init_name_mapping )
+    fwd2_df = predict_points( fwd_init, fwd_rf, fwd_init_name_mapping )
+
+    # Create one dataframe with players' names & predicted points
+    prev_season_df = pd.concat( [ gk2_df, def2_df, mid2_df, fwd2_df ], ignore_index = True )
+
+    cleaned_players_df = pd.read_csv( cleaned_players )
+    names = name_list_2( cleaned_players_df )
+
+    # Merge with previous points
+    prev_points = pd.merge(names, prev_season_df, on='name', how='left').fillna(0)
+    prev_points.rename(columns={'now_cost': 'value'}, inplace=True)
+
+    # Separate by position
+    position_data = {pos: prev_points[prev_points['position'] == pos][['value', 'name', 'points', 'position']]
+                     .sort_values(by='points', ascending=False) for pos in ['gk', 'def', 'mid', 'fwd']}
+    
+    # Concatenate all positions for selection
+    all_players = pd.concat(position_data.values(), ignore_index=True)
+
+    return chooseInitialTeam(all_players)
+
+initial_squad = initialTeam( POS_SORTED / 'goalkeepers_test.csv', POS_SORTED / 'defenders_test.csv', POS_SORTED / 'midfielders_test.csv', POS_SORTED / 'forwards_test.csv', '/Users/zacharylai/Desktop/fpl_points_predictor/datasets/24:25/cleaned_players24:25.csv' )
 
 init_starters, init_bench = startingXI( initial_squad )
 init_starters = sorted( init_starters, key=lambda x: ('gk', 'def', 'mid', 'fwd').index(x[3])  )    
@@ -183,3 +154,6 @@ team_points = totalPoints( init_starters )
 
 captains = chooseCaptain( init_starters )
 captain, vice_captain = captains[0], captains[1]
+
+if __name__=="__main__":
+    pprint(initial_squad)
