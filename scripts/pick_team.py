@@ -1,7 +1,7 @@
 # Includes functions for picking the best team/starters considering predicted points and budget
-import pprint
+from pprint import pprint
 from .mult_seasons_attempt import *
-import pandas as pd
+import pandas as pd # type: ignore
 
 def lookup( name_mapping, X_test, y_test, pred ):
         pprint( name_mapping )
@@ -52,12 +52,6 @@ def combine_dfs( pred, X_test, price_df, gw, pos, name_mapping, name_mapping_rev
     price_combined = add_price( price, gameweek_df, name_mapping, name_mapping_reverse )
     sorted = price_combined.sort_values( by='points', ascending = False )
     return sorted
-
-
-
-teams_df = pd.read_csv('/Users/zacharylai/Desktop/fpl_points_predictor/datasets/23:24/teams23:24.csv')
-teams = teams_df['name'].tolist()
-
 
 
 # return the top 15 players predicted to perform in the given gameweek using a budget of 100 pounds
@@ -162,7 +156,7 @@ def startingXI( best15 ):
     bench4.append( best15[3][2] )
 
     # Next 4 highest players
-    bench_sorted = sorted(bench4, key=lambda x: x[3], reverse=True)
+    bench_sorted = sorted(bench4, key=lambda x: x[2], reverse=True)
     top4 = bench_sorted[:4]
     for player in top4:
         starting11.append( player )

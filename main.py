@@ -1,32 +1,54 @@
 # from scripts import mult_seasons_attempt
-from scripts import pick_team
-from scripts import initial_team
+# from scripts import pick_team
+# from scripts import initial_team
+# from scripts import transfers
+# from scripts import my_squad
 import pandas as pd
 from pprint import pprint
 
-# Print best predicted team for each gameweek, recommended starting XI, and squad value
-# Test with players from last season
 
-initial_squad_2 = initial_team.chooseInitialTeam( '/Users/zacharylai/Desktop/fpl_points_predictor/datasets/position_sorted/goalkeepers_test.csv', '/Users/zacharylai/Desktop/fpl_points_predictor/datasets/position_sorted/defenders_test.csv', '/Users/zacharylai/Desktop/fpl_points_predictor/datasets/position_sorted/midfielders_test.csv', '/Users/zacharylai/Desktop/fpl_points_predictor/datasets/position_sorted/forwards_test.csv', '/Users/zacharylai/Desktop/fpl_points_predictor/datasets/24:25/cleaned_players24:25.csv' )
-init_starters, init_bench = pick_team.startingXI( initial_squad_2 )
-init_starters = sorted( init_starters, key=lambda x: ('gk', 'def', 'mid', 'fwd').index(x[3])  )    
-init_bench = sorted( init_bench, key=lambda x: x[2], reverse=True )
+# transfers.playersOut(3, initial_team.initial_squad)
+# gw = 3
+# choice = int(input( "1) View team's points scored\n2) View recommended team\n3) Find best players to transfer in\n4) View worst performing players on your squad\n5) View minutes played by your team\n-1) -1 to quit\n"))
+# while choice != -1:
+#     if choice == 1:
+#         option = int(input("1) Most recent gameweek\n2) Enter a gameweek\n3) All gameweeks\n"))
+#         if option == 1:
+#             for position in initial_team.initial_squad:
+#                 for player in position:
+#                     name = player[1]
+#                     print(name, ": ", transfers.player_points_dict[name][-1])
+#             print("\n")
+#         elif option == 2:
+#             userGW = int(input("Enter gameweek: \n"))
+#             for position in initial_team.initial_squad:
+#                 for player in position:
+#                     name = player[1]
+#                     print(name, ": ", transfers.player_points_dict[name][userGW-1])
+#             print("\n")
+#         elif option == 3:
+#             i = 1
+#             while i < gw:
+#                 print("GW", i, "\n")
+#                 for position in initial_team.initial_squad:
+#                     for player in position:
+#                         name = player[1]
+#                         print(name, ": ", transfers.player_points_dict[name][i-1])
+#                 print("\n---------------------------\n")
+#                 i = i+1
+#     elif choice == 2:
+#         print("For GW", gw)
+#         transfers.weeklyRecs(initial_team.initial_squad)
+#     elif choice == 3:
+#         pprint( transfers.findBestPlayers(gw) )
+#     elif choice == 4:
+#         gws, squadPoints = transfers.findWorstPlayers(gw, initial_team.initial_squad)
+#         print("Yours squads point sum from the last", gws, "gws: ")
+#         for key,value in squadPoints.items():
+#             print(key, ":", value)
+#     elif choice == 5:
+#         gws, squadMins = transfers.minutesPlayed(gw, initial_team.initial_squad)
+#         print("Yours squads minutes played from the last", gws, "gws: ")
+#         pprint(squadMins)
+#     choice = int(input( "1) View team's points scored\n2) View recommended team\n3) Find best players to transfer in\n4) View worst performing players on your squad\n5) View minutes played by your team\n-1) -1 to quit\n"))
 
-value = pick_team.squadValue( initial_squad_2 )
-value = round( value, 1 )
-
-team_points = pick_team.totalPoints( init_starters )
-
-captains = pick_team.chooseCaptain( init_starters )
-captain, vice_captain = captains[0], captains[1]
-
-
-print( "\nGameweek 1\n----------------------------")
-print( "\nStarting XI:\n----------------------" )
-pprint( init_starters )
-print( "\nBench\n-----------------------")
-pprint( init_bench )
-print( "/nCaptain: ", captain[1] )
-print( "Vice Captain: ", vice_captain[1] )
-print( '\nTotal predicted points: ', team_points )
-print( '\nSquad value: ', value )
