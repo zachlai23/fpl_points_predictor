@@ -1,8 +1,8 @@
 # Includes functions for picking the best team/starters considering predicted points and budget
 from pprint import pprint
-from fpl_rf_prediction import *
+from .fpl_rf_prediction import *
 import pandas as pd # type: ignore
-from fixtures import *
+from .fixtures import *
 
 def lookup( name_mapping, X_test, y_test, pred ):
         pprint( name_mapping )
@@ -72,31 +72,6 @@ def combination(gk, defs, mid, fwd, gk_map, def_map, mid_map, fwd_map, budget):
     
     best = []
     total_cost = 0
-
-    # # Iterate through the sorted players and select the best team under the budget
-    # for _, player in df.iterrows():
-    #     pos = player['position']
-    #     team = player['team']
-    #     player_value = player['value']
-        
-    #     # Check if this player can be selected based on position, team, and budget
-    #     if position_filled[pos] < position_requirements[pos] and team_count[team] < 3 and total_cost + player_value <= budget:
-    #         selected_players.append(player)
-    #         position_filled[pos] += 1
-    #         team_count[team] += 1
-    #         total_cost += player_value
-            
-    #         # Stop when we have selected 15 players
-    #         if len(selected_players) == 15:
-    #             break
-    
-    # # Map player IDs to names and group by position
-    # gk = [gk_map[p['name']] if p['position'] == 'gk' else p['name'] for p in selected_players if p['position'] == 'gk']
-    # defs = [def_map[p['name']] if p['position'] == 'def' else p['name'] for p in selected_players if p['position'] == 'def']
-    # mids = [mid_map[p['name']] if p['position'] == 'mid' else p['name'] for p in selected_players if p['position'] == 'mid']
-    # fwds = [fwd_map[p['name']] if p['position'] == 'fwd' else p['name'] for p in selected_players if p['position'] == 'fwd']
-
-    # return [gk, defs, mids, fwds]
     
     players = [ 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4.5, 4.5, 4.3 ]
     i=0
@@ -158,33 +133,6 @@ def bestPossibleTeam( gw ):
     fwd_df = fwd[['value', 'name', 'team', 'points', 'position']]
     
     return combination( gk_df, def_df, mid_df, fwd_df, gk_test_name_mapping, def_test_name_mapping, mid_test_name_mapping, fwd_test_name_mapping, 100 )
-
-
-# # Picks the best possible starting eleven given the 15 players chosen for the team
-# def startingXI( best15 ):
-#     starting11 = []
-#     bench = []
-
-#     starting11.append(best15[0][0]) # Starting gk
-#     bench.append(best15[0][1])  # Bench gk
-#     # gk =  best15[0][1]
-
-#     starting11.append( best15[1][:3] )  # Top 3 defenders
-#     bench.append( best15[1][3:] )
-
-#     # Top 2 mids
-#     starting11.append( best15[2][:2] )  # Top 2 mids
-#     bench.append( best15[2][2:] ) 
-
-#     # Top Forward
-#     starting11.append( best15[3][0] )
-#     bench.append( best15[3][1:] )
-
-#     # Next 4 highest players added to starters
-#     bench_sorted = sorted(bench, key=lambda x: x[2], reverse=True)
-#     starting11 += bench_sorted[:4]
-#     bench = bench_sorted[4:]
-#     return starting11, bench
 
 # Picks the best possible starting eleven given the 15 players chosen for the team
 def startingXI( best15 ):

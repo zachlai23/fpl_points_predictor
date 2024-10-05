@@ -1,8 +1,8 @@
 # Picking the best initial team based off previous seasons statistics
-from fpl_rf_prediction import *
-from pick_team import *
+from .fpl_rf_prediction import *
+from .pick_team import *
 import pandas as pd # type: ignore
-from fixtures import *
+from .fixtures import *
 
 POS_SORTED = Path('/Users/zacharylai/Desktop/fpl_points_predictor/datasets/position_sorted')
 
