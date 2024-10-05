@@ -121,7 +121,7 @@ def position_preprocess( df, position ):
         df['avg_goals_conceded'] = df.groupby('name')['goals_conceded'].expanding().mean().shift(1).fillna(0).reset_index(level=0, drop=True)
         df['avg_cs'] = df.groupby('name')['clean_sheets'].expanding().mean().shift(1).fillna(0).reset_index(level=0, drop=True)
         df['avg_x_goals_conceded'] = df.groupby('name')['expected_goals_conceded'].expanding().mean().shift(1).fillna(0).reset_index(level=0, drop=True)
-        df['total_cs'] = df.groupby('name')['clean_sheets'].cumsum().shift(1).fillna(0)
+        # df['total_cs'] = df.groupby('name')['clean_sheets'].cumsum().shift(1).fillna(0)
 
         columns_to_zero = ['avg_saves', 'avg_ict', 'avg_pen_saves','avg_goals_conceded',
                            'avg_xP','avg_cs','avg_bps','avg_mins','avg_x_goals_conceded',
@@ -293,7 +293,7 @@ fwd_pred = fwd_rf.predict( fwd_X_test )
 
 # Output results and feature importance charts
 if __name__ == "__main__":
-    print(def_X_test.columns)
+    print(fwd_X_test.columns)
     print( "GK results:")
     print_results( gk_y_test, gk_pred )
     print('-------------------------------')

@@ -2,6 +2,7 @@
 from pprint import pprint
 from fpl_rf_prediction import *
 import pandas as pd # type: ignore
+from fixtures import *
 
 def lookup( name_mapping, X_test, y_test, pred ):
         pprint( name_mapping )
@@ -39,39 +40,70 @@ def add_price( price_df, gw_df, name_mapping, name_mapping_reverse ):
 
 # return dataframe the combines names and points for the given gameweek
 def combine_dfs( pred, X_test, price_df, gw, pos, name_mapping, name_mapping_reverse ):
+    # Create df for predictied points
     pred_df = pd.DataFrame( pred, columns=['points'] )
     combined_df = pd.concat( [X_test, pred_df], axis=1 )
-    temp_df = combined_df[ combined_df['GW'] == gw ]
-    gameweek_df = temp_df[ ['name','points'] ]
+
+
+    gw_df = combined_df[combined_df['GW'] == gw]
+    gameweek_df = gw_df[['name','points']].cpoy()
     gameweek_df['position'] = pos
 
+    # Sum points by name and position
     gameweek_df = gameweek_df.groupby(['name', 'position' ], as_index=False)['points'].sum()
 
+    # Get prices for gw
     price_df = price_df[price_df['GW']==gw]
     price = price_df[price_df['position'] == pos.upper()]
+
+    # Merge gw and price data
     price_combined = add_price( price, gameweek_df, name_mapping, name_mapping_reverse )
     sorted = price_combined.sort_values( by='points', ascending = False )
     return sorted
 
 
 # return the top 15 players predicted to perform in the given gameweek using a budget of 100 pounds
-def combination( gk, defs, mid, fwd, gk_map, def_map, mid_map, fwd_map, budget ):
-    df = pd.concat( [ gk, defs, mid, fwd ] )
+def combination(gk, defs, mid, fwd, gk_map, def_map, mid_map, fwd_map, budget):
+    df = pd.concat([gk, defs, mid, fwd]).sort_values(by='points', ascending=False)
+
     position_requirements = { 'gk':2, 'def':5, 'mid':5, 'fwd':3 }
     position_filled = { 'gk':0, 'def':0, 'mid':0, 'fwd':0 }
+    team_count = {team: 0 for team in teams}
+    
     best = []
     total_cost = 0
-    df = df.sort_values(by='points', ascending=False)
-    players = [ 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4.5, 4.5, 4.3 ]
 
-    team_count = {}
-    for team in teams:
-        team_count[team] = 0
+    # # Iterate through the sorted players and select the best team under the budget
+    # for _, player in df.iterrows():
+    #     pos = player['position']
+    #     team = player['team']
+    #     player_value = player['value']
+        
+    #     # Check if this player can be selected based on position, team, and budget
+    #     if position_filled[pos] < position_requirements[pos] and team_count[team] < 3 and total_cost + player_value <= budget:
+    #         selected_players.append(player)
+    #         position_filled[pos] += 1
+    #         team_count[team] += 1
+    #         total_cost += player_value
+            
+    #         # Stop when we have selected 15 players
+    #         if len(selected_players) == 15:
+    #             break
     
+    # # Map player IDs to names and group by position
+    # gk = [gk_map[p['name']] if p['position'] == 'gk' else p['name'] for p in selected_players if p['position'] == 'gk']
+    # defs = [def_map[p['name']] if p['position'] == 'def' else p['name'] for p in selected_players if p['position'] == 'def']
+    # mids = [mid_map[p['name']] if p['position'] == 'mid' else p['name'] for p in selected_players if p['position'] == 'mid']
+    # fwds = [fwd_map[p['name']] if p['position'] == 'fwd' else p['name'] for p in selected_players if p['position'] == 'fwd']
+
+    # return [gk, defs, mids, fwds]
+    
+    players = [ 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4.5, 4.5, 4.3 ]
     i=0
     # add player with highest predicted points if position is needed and he fits under the budget leaving enough for other players
     for index,row in df.iterrows():
         pos = row['position']
+        team = row['team']
         total = sum(players)
         total = round( total, 1 )
         if position_filled[pos] < position_requirements[pos] and total + (row['value']-4) <= budget and team_count[row['team']] < 3:
@@ -128,6 +160,32 @@ def bestPossibleTeam( gw ):
     return combination( gk_df, def_df, mid_df, fwd_df, gk_test_name_mapping, def_test_name_mapping, mid_test_name_mapping, fwd_test_name_mapping, 100 )
 
 
+# # Picks the best possible starting eleven given the 15 players chosen for the team
+# def startingXI( best15 ):
+#     starting11 = []
+#     bench = []
+
+#     starting11.append(best15[0][0]) # Starting gk
+#     bench.append(best15[0][1])  # Bench gk
+#     # gk =  best15[0][1]
+
+#     starting11.append( best15[1][:3] )  # Top 3 defenders
+#     bench.append( best15[1][3:] )
+
+#     # Top 2 mids
+#     starting11.append( best15[2][:2] )  # Top 2 mids
+#     bench.append( best15[2][2:] ) 
+
+#     # Top Forward
+#     starting11.append( best15[3][0] )
+#     bench.append( best15[3][1:] )
+
+#     # Next 4 highest players added to starters
+#     bench_sorted = sorted(bench, key=lambda x: x[2], reverse=True)
+#     starting11 += bench_sorted[:4]
+#     bench = bench_sorted[4:]
+#     return starting11, bench
+
 # Picks the best possible starting eleven given the 15 players chosen for the team
 def startingXI( best15 ):
     starting11 = []
@@ -163,6 +221,7 @@ def startingXI( best15 ):
         bench4.remove( player )
     bench4.append(gk)
     return starting11, bench4
+
 
 
 # Return value of squad

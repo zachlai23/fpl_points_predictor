@@ -36,6 +36,9 @@ def gk_merged_preprocess( gk_df ):
     gk_df, gk_name_mapping, gk_name_mapping_reverse = name_mapping( gk_df )
     gk_df['total_starts'] = gk_df.groupby('name')['starts'].transform('sum')
 
+    gk_df['was_home'] = gk_df['was_home'].astype('category')
+    gk_df['was_home'] = gk_df['was_home'].cat.codes
+
     # Take average of each feature from all gameweeks for each player
     columns_to_average = ['saves','ict_index','penalties_saved','goals_conceded','xP','clean_sheets','bps','minutes','expected_goals_conceded']
     averages = gk_df.groupby('name')[columns_to_average].transform('mean')
@@ -48,14 +51,16 @@ def gk_merged_preprocess( gk_df ):
         difficulty = opponentDifficulty( team, 3 )
         row['opponent_strength'] = difficulty
 
-    gk_df = gk_df.drop(['total_points', 'opponent_team','value','position','was_home','team','expected_goals_conceded','penalties_saved','bonus','own_goals','minutes','saves','kickoff_time','team_a_score','team_h_score','expected_assists','expected_goal_involvements','expected_goals','transfers_in','transfers_out','transfers_balance','fixture','assists','goals_scored','ict_index','influence','creativity','threat','penalties_missed','selected','goals_conceded','xP','clean_sheets','element','round','red_cards','yellow_cards','starts','bps' ],axis=1)
+    gk_df = gk_df.drop(['total_points', 'opponent_team','value','position','team','expected_goals_conceded','penalties_saved','bonus','own_goals','minutes','saves','kickoff_time','team_a_score','team_h_score','expected_assists','expected_goal_involvements','expected_goals','transfers_in','transfers_out','transfers_balance','fixture','assists','goals_scored','ict_index','influence','creativity','threat','penalties_missed','selected','goals_conceded','xP','clean_sheets','element','round','red_cards','yellow_cards','starts','bps' ],axis=1)
     gk_df.rename(columns={'avg_minutes': 'avg_mins',
                           'avg_ict_index': 'avg_ict',
                           'avg_clean_sheets': 'avg_cs',
                           'avg_expected_goals_conceded': 'avg_x_goals_conceded',
                           'avg_penalties_saved': 'avg_pen_saves'
                           }, inplace=True)
-    gk_df = gk_df[['name', 'GW', 'avg_saves', 'avg_ict', 'avg_pen_saves', 'avg_goals_conceded', 'avg_xP', 'avg_cs', 'avg_bps', 'avg_mins', 'avg_x_goals_conceded', 'total_starts', 'opponent_strength']]
+    gk_df = gk_df[['name', 'was_home', 'GW', 'avg_ict', 'avg_bps', 'avg_xP',
+                    'total_starts', 'avg_mins', 'opponent_strength', 'avg_saves',
+                    'avg_pen_saves', 'avg_goals_conceded', 'avg_cs', 'avg_x_goals_conceded']]
     gk_pred = gk_rf.predict( gk_df )
     return gk_pred, gk_df, gk_name_mapping
 
@@ -92,7 +97,9 @@ def def_merged_preprocess( def_df ):
                           'avg_expected_goal_involvements': 'avg_xGI',
                           'avg_goals_conceded': 'avg_GC'
                           }, inplace=True)
-    def_df = def_df[['name', 'was_home', 'GW', 'avg_ict', 'avg_bps', 'avg_xP', 'avg_xA', 'avg_xGI', 'avg_xGC', 'avg_GC', 'avg_mins', 'total_assists', 'total_goals', 'total_cs', 'total_starts', 'opponent_strength']]
+    def_df = def_df[['name', 'was_home', 'GW', 'avg_ict', 'avg_bps', 'avg_xP',
+       'total_starts', 'avg_mins', 'opponent_strength', 'avg_xA', 'avg_xGI',
+       'avg_xGC', 'avg_GC', 'total_assists', 'total_goals', 'total_cs']]
     def_pred = def_rf.predict( def_df )
     return def_pred, def_df, def_name_mapping
 
@@ -130,7 +137,10 @@ def mid_merged_preprocess(mid_df):
                           'avg_expected_goals': 'avg_xG'
                           }, inplace=True)
 
-    mid_df = mid_df[['name', 'was_home', 'GW', 'avg_ict', 'avg_bps', 'avg_xP', 'avg_xA', 'avg_xG', 'avg_xGI', 'avg_xGC', 'avg_GC', 'avg_mins', 'total_assists', 'total_goals', 'total_cs', 'total_starts', 'opponent_strength']]
+    mid_df = mid_df[['name', 'was_home', 'GW', 'avg_ict', 'avg_bps', 'avg_xP',
+       'total_starts', 'avg_mins', 'opponent_strength', 'avg_xA', 'avg_xG',
+       'avg_xGI', 'avg_xGC', 'avg_GC', 'total_assists', 'total_goals',
+       'total_cs']]
     mid_pred = mid_rf.predict( mid_df )
     return mid_pred, mid_df, mid_name_mapping
 
@@ -163,7 +173,9 @@ def fwd_merged_preprocess(fwd_df):
                           'avg_expected_goal_involvements': 'avg_xGI',
                           'avg_expected_goals': 'avg_xG'
                           }, inplace=True)
-    fwd_df = fwd_df[['name', 'was_home', 'GW', 'avg_ict', 'avg_bps', 'avg_xP', 'avg_xA', 'avg_xG', 'avg_xGI', 'avg_mins', 'total_assists', 'total_goals', 'total_starts', 'opponent_strength']]
+    fwd_df = fwd_df[['name', 'was_home', 'GW', 'avg_ict', 'avg_bps', 'avg_xP',
+       'total_starts', 'avg_mins', 'opponent_strength', 'avg_xA', 'avg_xG',
+       'avg_xGI', 'total_assists', 'total_goals']]
     fwd_pred = fwd_rf.predict( fwd_df )
     return fwd_pred, fwd_df, fwd_name_mapping
 
