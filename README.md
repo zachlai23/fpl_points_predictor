@@ -1,5 +1,5 @@
 # fpl_points_predictor
-Using machine learning to create a point predictor for Fantasy Premier League(https://fantasy.premierleague.com/). 
+Using machine learning to create a point predictor for [Fantasy Premier League](https://fantasy.premierleague.com/). 
 
 ## Model Details
 ### Datasets
