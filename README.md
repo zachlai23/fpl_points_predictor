@@ -27,7 +27,13 @@ Future work will focus on improving transfer recommendations by considering addi
 ## Example
 Recommendations for a given gameweek:
 
-<img width="448" alt="Screenshot 2024-10-05 at 12 41 41 PM" src="https://github.com/user-attachments/assets/a6e985b9-d308-4fff-81a1-4d59a6d30d52">
+<img width="328" alt="Screenshot 2024-10-05 at 1 42 53 PM" src="https://github.com/user-attachments/assets/85408714-fc0b-4f43-ac4f-4dcd609e6a19">
+
+<img width="455" alt="Screenshot 2024-10-05 at 1 42 08 PM" src="https://github.com/user-attachments/assets/0d071111-b1b4-4382-ab6e-c009be5c4caf">
+
+<img width="454" alt="Screenshot 2024-10-05 at 1 42 32 PM" src="https://github.com/user-attachments/assets/369def3a-2ec6-4b6d-9e48-44788a0f0792">
+
+<img width="350" alt="Screenshot 2024-10-05 at 1 42 42 PM" src="https://github.com/user-attachments/assets/29ec48bc-70ec-48a0-8d1b-b5f036957087">
 
 
 
