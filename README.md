@@ -3,8 +3,8 @@ Using machine learning to create a point predictor for [Fantasy Premier League](
 
 ## Model Details
 ### Datasets
-- **Training Data:** 20/21, 21/22, 22/23 season data
-- **Testing Data:** 23/24 season data
+- **Training Data:** Data from the 20/21, 21/22, 22/23 seasons.
+- **Testing Data:** Data from the 23/24 season.
 
 Data from https://github.com/vaastav/Fantasy-Premier-League.
 - **Preprocessing:** data from each player is averaged across prior gameweeks and then used as features for the model.
