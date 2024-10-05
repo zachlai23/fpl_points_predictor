@@ -17,6 +17,7 @@ Data from https://github.com/vaastav/Fantasy-Premier-League.
 
 ## Additional Features
 - **Automated Team Management:** Recommends an initial team under the given budget, and proposes transfers based on predicted points from the model.  It also takes into account actual points scored from prior weeks and upcoming fixture difficulty.
+- **Interactive Input/Output:** Allows users to request different recommendations for their team.
 
 ## Future Improvements
 **Motivation:** I am interested in exploring how computer models based on statistical analysic compare to hand picked teams by human managers.  I hope to progress this project to the point where it consistently outperforms many hand picked teams. 
