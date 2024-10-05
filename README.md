@@ -8,15 +8,18 @@ Using machine learning to create a point predictor for [Fantasy Premier League](
 
 Data from https://github.com/vaastav/Fantasy-Premier-League.
 - **Preprocessing:** data from each player is averaged across prior gameweeks and then used as features for the model.
-  - Features considered vary by position but include goals scored, assists, clean sheets, expected points/goals/assists/clean sheets/goals conceded, ict_index, bps,...
+  - Features vary by position and include metrics such as goals scored, assists, clean sheets, expected points/goals/assists/clean sheets/goals conceded, ict_index, BPS(bonus points system), and more
+  - 
 ### Random Forest Model 
-- From scikit learn, outperformed linear regression and neural network models when tested.
+- From scikit learn, outperformed linear regression and neural network models when tested on historical data.
+- A separate model was created for each position(Goalkeeper, Defender, Midfielder, Forward), which significantly improved accuracy compared to using a single model for all positions.
+- Provides insight into which metrics matter most for each position.
 
 ## Additional Features
-- **Automated Team Management:** Recommends an initial team, and transfers based on predicted points from the model, and analysis of fixtures in the near future.
+- **Automated Team Management:** Recommends an initial team and proposes transfers based on predicted points from the model.  It also takes into account actual points scored from prior weeks and upcoming fixture difficulty.
 
 ## Future Improvements
-Continue to improve the transfer recommendations taking more details into account.  I plan to create an interactive web application where recommendations can be provided to assists users with their team decisions.
+Future work will focus on improving transfer recommendations by considering additional factors.  I also plan to develop an interactive web application to provide users with customized team suggestions.
 
 ## Example
 Recommendations for a given gameweek:
