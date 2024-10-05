@@ -9,7 +9,7 @@ Using machine learning to create a point predictor for [Fantasy Premier League](
 Data from https://github.com/vaastav/Fantasy-Premier-League.
 - **Preprocessing:** data from each player is averaged across prior gameweeks and then used as features for the model.
   - Features vary by position and include metrics such as goals scored, assists, clean sheets, expected points/goals/assists/clean sheets/goals conceded, ict_index, BPS(bonus points system), and more
-  - 
+    
 ### Random Forest Model 
 - From scikit learn, outperformed linear regression and neural network models when tested on historical data.
 - A separate model was created for each position(Goalkeeper, Defender, Midfielder, Forward), which significantly improved accuracy compared to using a single model for all positions.
