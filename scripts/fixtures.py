@@ -12,6 +12,12 @@ DROP_COLS_TEAMS = ['code', 'draw', 'form', 'loss', 'played', 'points',
                         'strength_defence_home', 'strength_defence_away', 
                         'pulse_id']
 
+# Create a dataframe of all player names
+player_names_df = pd.read_csv(DATASETS_DIR / 'player_idlist.csv')
+player_names_df['name'] = player_names_df['first_name'] + ' ' + player_names_df['second_name']
+player_names_df = player_names_df[['name']]
+player_names = player_names_df['name'].tolist()
+
 # Create a dictionary of team(key), to list of all players on that team(value)
 merged_gw = pd.read_csv(DATASETS_DIR / '24:25mergedGW.csv')
 max_gameweek = merged_gw['GW'].max()

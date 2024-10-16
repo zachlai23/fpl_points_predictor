@@ -369,6 +369,7 @@ def playersOut(gw, squad):
 
 
 if __name__ == "__main__":
-    squad_predictions( 3 )
-    weeklyRecs(initial_squad)
+    pprint(predictions(3))
+    # squad_predictions( 3 )
+    # weeklyRecs(initial_squad)
 #     pprint( findBestPlayers( 3, df_most_recent ) )
