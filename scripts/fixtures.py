@@ -19,7 +19,7 @@ player_names_df = player_names_df[['name']]
 player_names = player_names_df['name'].tolist()
 
 # Create a dictionary of team(key), to list of all players on that team(value)
-merged_gw = pd.read_csv(DATASETS_DIR / '24:25mergedGW.csv')
+merged_gw = pd.read_csv(DATASETS_DIR / 'merged_gw.csv')
 max_gameweek = merged_gw['GW'].max()
 merged_gw = merged_gw[merged_gw['GW'] == max_gameweek]
 team_players_dict = merged_gw.groupby('team')['name'].apply(list).to_dict()

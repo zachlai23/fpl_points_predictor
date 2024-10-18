@@ -33,7 +33,7 @@ def get_players():
 
 @app.route("/api/predictedpoints/<player_name>", methods=['GET'])
 def get_player_pred_points(player_name):
-    gw = 8
+    gw = 7
     pred_points = predictions(gw)  # Get the DataFrame with predictions
 
     # Filter the DataFrame for the player
@@ -41,12 +41,11 @@ def get_player_pred_points(player_name):
 
     if not filtered_points.empty:
         points = filtered_points['points'].values[0]
+        print(points)
         points = round(points, 2)
         return jsonify({'player_name': player_name, 'predicted_points': points, 'gw': gw})
     else:
         return jsonify({'error': 'Player not found'}), 404  # Return error if player not found
-
-
 
 
 if __name__ == "__main__":

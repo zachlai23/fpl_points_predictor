@@ -5,7 +5,7 @@ from .fpl_rf_prediction import *
 from pprint import pprint
 from .fixtures import *
 
-merged_gw = pd.read_csv('/Users/zacharylai/Desktop/fpl_points_predictor/datasets/24:25/24:25mergedGW.csv')
+merged_gw = pd.read_csv('/Users/zacharylai/Desktop/fpl_points_predictor/datasets/24:25/merged_gw.csv')
 df_sorted = merged_gw.sort_values(by=['name', 'GW'])
 df_sorted['value'] = df_sorted['value'] / 10
 
@@ -179,12 +179,12 @@ def fwd_merged_preprocess(fwd_df):
     fwd_pred = fwd_rf.predict( fwd_df )
     return fwd_pred, fwd_df, fwd_name_mapping
 
-def combine_pred_dfs(X, pred, name_mapping, pos):
+def combine_pred_dfs(X, pred, name_mapping, pos, gw):
     pred_df = pd.DataFrame( pred, columns=['points'] )
     pred_df = pred_df.reset_index(drop=True)
     X = X.reset_index(drop=True)
     combined_df = pd.concat( [ X, pred_df], axis=1 )
-    temp_df = combined_df[ combined_df['GW'] == 1 ]
+    temp_df = combined_df[ combined_df['GW'] == gw ]
     points = temp_df[ ['name', 'points'] ]
     for name in points['name']:
         points['name'] = points['name'].replace( name, name_mapping[name] )
@@ -195,7 +195,7 @@ def combine_pred_dfs(X, pred, name_mapping, pos):
 
 # # Run model to get predictions for the upcoming gameweek based on merged_gw.csv
 def predictions( gw ):
-    df = pd.read_csv( '/Users/zacharylai/Desktop/fpl_points_predictor/datasets/24:25/24:25mergedGW.csv' )
+    df = pd.read_csv( '/Users/zacharylai/Desktop/fpl_points_predictor/datasets/24:25/merged_gw.csv' )
 
     gk_df = df[df['position'] == 'GK']
     def_df = df[df['position'] == 'DEF']
@@ -207,10 +207,10 @@ def predictions( gw ):
     mid_pred, mid_X, mid_name_mapping = mid_merged_preprocess(mid_df)
     fwd_pred, fwd_X, fwd_name_mapping = fwd_merged_preprocess(fwd_df)
 
-    gk_points = combine_pred_dfs(gk_X, gk_pred, gk_name_mapping, 'gk')
-    def_points = combine_pred_dfs(def_X, def_pred, def_name_mapping, 'def')
-    mid_points = combine_pred_dfs(mid_X, mid_pred, mid_name_mapping, 'mid')
-    fwd_points = combine_pred_dfs(fwd_X, fwd_pred, fwd_name_mapping, 'fwd')
+    gk_points = combine_pred_dfs(gk_X, gk_pred, gk_name_mapping, 'gk', gw)
+    def_points = combine_pred_dfs(def_X, def_pred, def_name_mapping, 'def', gw)
+    mid_points = combine_pred_dfs(mid_X, mid_pred, mid_name_mapping, 'mid', gw)
+    fwd_points = combine_pred_dfs(fwd_X, fwd_pred, fwd_name_mapping, 'fwd', gw)
 
     # Merge all point predictions together
     full_points = pd.concat( [ gk_points, def_points, mid_points, fwd_points ], axis=0, ignore_index=True )
@@ -369,7 +369,7 @@ def playersOut(gw, squad):
 
 
 if __name__ == "__main__":
-    pprint(predictions(3))
+    pprint(predictions(2))
     # squad_predictions( 3 )
     # weeklyRecs(initial_squad)
 #     pprint( findBestPlayers( 3, df_most_recent ) )
