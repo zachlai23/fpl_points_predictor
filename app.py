@@ -9,10 +9,19 @@ app = Flask(__name__, template_folder='../fpl_assist/templates', static_folder='
 def home():
     return render_template('index.html')
 
-# Route for the player search page
-@app.route("/player-search")
-def player_search():
-    return render_template('player-search.html')
+# Route for the predicted points page
+@app.route("/predicted-points")
+def predicted_points():
+    return render_template('predicted-points.html')
+
+# Route for player stats page
+@app.route("/player-stats")
+def player_stats():
+    return render_template('player-stats.html')
+
+@app.route("/team-management")
+def team_management():
+    return render_template('team-management.html')
 
 # Route to get the list of teams
 @app.route("/api/teams", methods=['GET'])
