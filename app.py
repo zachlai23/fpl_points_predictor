@@ -66,24 +66,24 @@ def get_player_prices(player_name):
     else:
         print(f"{player_name} not found")
 
-@app.route("/api/team/<player_name>", methods=['GET'])
-def get_player_team(player_name):
-    team = names_teams.loc[names_teams['name'].str.lower() == player_name, 'team'].values
+# @app.route("/api/team/<player_name>", methods=['GET'])
+# def get_player_team(player_name):
+#     team = names_teams.loc[names_teams['name'].str.lower() == player_name, 'team'].values
 
-    if team.size > 0:
-        return jsonify({'Team':team[0]})
-    else:
-        print(f"{player_name} not found")
+#     if team.size > 0:
+#         return jsonify({'Team':team[0]})
+#     else:
+#         print(f"{player_name} not found")
 
 player_points_dict = {name.lower(): points for name, points in player_points_dict.items()}
 
-@app.route("/api/past-points/<player_name>", methods=['GET'])
-def get_past_points(player_name):
-    past_points = player_points_dict[player_name]
-    if past_points is not None:
-        return jsonify({'PastPoints':past_points})
-    else:
-        return jsonify({'error': 'Player not found'}), 404
+# @app.route("/api/past-points/<player_name>", methods=['GET'])
+# def get_past_points(player_name):
+#     past_points = player_points_dict[player_name]
+#     if past_points is not None:
+#         return jsonify({'PastPoints':past_points})
+#     else:
+#         return jsonify({'error': 'Player not found'}), 404
 
 
 if __name__ == "__main__":
