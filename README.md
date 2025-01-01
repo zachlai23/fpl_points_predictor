@@ -20,7 +20,7 @@ Data from https://github.com/vaastav/Fantasy-Premier-League.
 - **Interactive Input/Output:** Allows users to request different recommendations for their team.
 
 ## Future Improvements
-**Motivation:** I am interested in exploring how computer models based on statistical analysic compare to hand picked teams by human managers.  I hope to progress this project to the point where it consistently outperforms many hand picked teams. 
+**Motivation:** I am interested in exploring how computer models based on statistical analysis compare to hand picked teams by human managers.  I hope to progress this project to the point where it consistently outperforms many hand picked teams. 
 
 Future work will focus on improving transfer recommendations by considering additional factors.  I also plan to develop an interactive web application to provide users with customized team suggestions.
 
