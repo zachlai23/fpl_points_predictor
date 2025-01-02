@@ -1,9 +1,9 @@
 # Choose which players to transfer in/out
-from .initial_team import *
+from initial_team import *
 import pandas as pd # type: ignore
-from .fpl_rf_prediction import *
+from fpl_rf_prediction import *
 from pprint import pprint
-from .fixtures import *
+from fixtures import *
 
 merged_gw = pd.read_csv('/Users/zacharylai/Desktop/fpl_points_predictor/datasets/24:25/merged_gw.csv')
 df_sorted = merged_gw.sort_values(by=['name', 'GW'])
@@ -17,7 +17,7 @@ player_mins_dict = df_sorted.groupby('name')['minutes'].apply(list).to_dict()
 
 most_recent_gw = df_sorted['GW'].max()
 df_most_recent = df_sorted[df_sorted['GW'] == most_recent_gw]
-names_teams = df_most_recent[['name', 'team', 'value']]
+names_teams = df_most_recent[['name', 'position', 'team', 'value']]
 
 
 # Update each players team(in case of transfer) and cost(price change)
@@ -25,6 +25,7 @@ for position in initial_squad:
     for player in position:
         name = player[1]
         index = names_teams[ names_teams['name'] == name ].index
+        position = names_teams.loc[ index, 'position' ].item()
         team = names_teams.loc[ index, 'team' ].item()
         value = names_teams.loc[ index, 'value' ].item()
         player.append( team )
@@ -368,8 +369,9 @@ def playersOut(gw, squad):
     pprint(transferOut)
 
 
-if __name__ == "__main__":
-    pprint(predictions(2))
+# if __name__ == "__main__":
+    # pprint(names_teams)
+    # pprint(predictions(2))
     # squad_predictions( 3 )
     # weeklyRecs(initial_squad)
 #     pprint( findBestPlayers( 3, df_most_recent ) )

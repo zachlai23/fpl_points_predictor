@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 from scripts.fixtures import team_players_dict, player_names
 from scripts.transfers import predictions, names_teams, player_points_dict
 
 app = Flask(__name__, template_folder='../fpl_assist/templates', static_folder='../fpl_assist/static')
+CORS(app)
 
 # Route for the home page
 @app.route("/")
@@ -62,18 +64,21 @@ def get_player_prices(player_name):
     price = names_teams.loc[names_teams['name'].str.lower() == player_name, 'value'].values
 
     if price.size > 0:
-        return jsonify({'Price':price[0]})
+        return jsonify({'price':price[0]})
     else:
         print(f"{player_name} not found")
 
-# @app.route("/api/team/<player_name>", methods=['GET'])
-# def get_player_team(player_name):
-#     team = names_teams.loc[names_teams['name'].str.lower() == player_name, 'team'].values
+@app.route("/api/position/<player_name>", methods=['GET'])
+def get_player_position(player_name):
+    player_name = player_name.strip().lower()
+    position = names_teams.loc[names_teams['name'].str.lower() == player_name, 'position'].values
+    return jsonify({'position': position[0]})
 
-#     if team.size > 0:
-#         return jsonify({'Team':team[0]})
-#     else:
-#         print(f"{player_name} not found")
+@app.route("/api/team/<player_name>", methods=['GET'])
+def get_player_team(player_name):
+    player_name = player_name.strip().lower()
+    team = names_teams.loc[names_teams['name'].str.lower() == player_name, 'team'].values
+    return jsonify({'team':team[0]})
 
 player_points_dict = {name.lower(): points for name, points in player_points_dict.items()}
 
@@ -87,4 +92,4 @@ player_points_dict = {name.lower(): points for name, points in player_points_dic
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
